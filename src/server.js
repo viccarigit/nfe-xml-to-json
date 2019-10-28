@@ -1,4 +1,4 @@
-const express = require('express');
+/* const express = require('express');
 const xmlparser = require('express-xml-bodyparser');
 
 const apiConfig = require('./app/config/api-config');
@@ -14,4 +14,10 @@ app.use(express.json());
 
 app.listen(apiConfig.port, () =>{
   console.log(`App's running on port ${apiConfig.port}`);
+}); */
+
+import app from './App';
+
+app.listen(3333, () =>{
+  console.log('App running on port 3333');
 });
