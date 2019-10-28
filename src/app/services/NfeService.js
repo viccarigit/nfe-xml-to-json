@@ -13,9 +13,10 @@ class NfeService{
 
     const xmlString = this.payload.buffer.toString('utf8');
     const nfeObject = nfeParser(xmlString);
+    var obj = {};
 
     try{
-      const obj = await this.getItensFrom(nfeObject);
+      obj = await this.getItensFrom(nfeObject);
     }catch(error){
       throw Error(error.message);
     }
@@ -25,8 +26,6 @@ class NfeService{
 
   getItensFrom(nfeObject){
     return new Promise((resolve, reject) =>{
-
-      reject({message: 'The xml body is required'});
 
       if(!nfeObject){
         reject({message: 'The xml body is required'});
