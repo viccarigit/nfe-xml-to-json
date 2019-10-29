@@ -7,12 +7,19 @@ class NfeService{
     }
 
     this.payload = payload;
+    this.nfeObject = this.getObjectFrom(payload);
+  }
+
+  getObjectFrom(payload){
+    const xmlString = this.payload.buffer.toString('utf8');
+    const nfeObject = nfeParser(xmlString);
+
+    return nfeObject;
   }
 
   async parse(){
 
-    const xmlString = this.payload.buffer.toString('utf8');
-    const nfeObject = nfeParser(xmlString);
+    const nfeObject = this.nfeObject;
     var obj = {};
 
     try{

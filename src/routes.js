@@ -1,5 +1,7 @@
-const { Router } = require('express');
-const upload =  require('./app/middlewares/upload');
+import { Router } from 'express';
+import upload from './app/middlewares/upload';
+import fileExists from './app/middlewares/file-exists';
+
 import NfeController from '../src/app/controllers/NfeController';
 
 const routes = new Router();
@@ -8,7 +10,8 @@ routes.get('/', (req, res)=>{
   return res.json({isOk: true});
 });
 
-routes.get('/xmlToJson', NfeController.index);
-routes.post('/xmlToJson', upload.single('xml'), NfeController.parseToJSON);
+routes.get('/xmlToJSON', NfeController.index);
+routes.post('/xmlToJSON', upload.single('xml'), fileExists, NfeController.parseToJSON);
+routes.post('/xmlToJSON/emitente', upload.single('xml'), fileExists, NfeController.emitenteToJSON);
 
-module.exports = routes;
+export default routes;

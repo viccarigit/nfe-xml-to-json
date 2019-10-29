@@ -10,6 +10,13 @@ class NfeController{
     const obj = await nfeService.parse();
     return res.json(obj);
   }
+
+  async emitenteToJSON(req, res){
+    const nfeService = new NfeService(req.file);
+    const obj = await nfeService.getEmitentefrom(nfeService.nfeObject);
+
+    return res.json(obj);
+  }
 }
 
 export default new NfeController();
