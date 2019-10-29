@@ -16,12 +16,73 @@ class NfeService{
     var obj = {};
 
     try{
-      obj = await this.getItensFrom(nfeObject);
+      obj.principal = await this.getPrincipalFrom(nfeObject);
+      obj.emitente = await this.getEmitentefrom(nfeObject);
+      obj.destinatario = await this.getDestinatarioFrom(nfeObject);
+      obj.itens = await this.getItensFrom(nfeObject);
+      obj.totais = await this.getTotaisFrom(nfeObject);
     }catch(error){
       throw Error(error.message);
     }
 
     return obj;
+  }
+
+  getPrincipalFrom(nfeObject){
+    return new Promise((resolve, reject) =>{
+      if(!nfeObject){
+        reject({message: 'The xml body is required'});
+      }
+
+      const principal = {
+        chave: nfeObject.chave(),
+        dataHoraRecebimento: nfeObject.dataHoraRecebimento(),
+        protocolo: nfeObject.protocolo(),
+        tipoAmbiente: nfeObject.tipoAmbiente(),
+        codigoStatusResposta: nfeObject.codigoStatusResposta(),
+        dataEmissao: nfeObject.dataEmissao(),
+        nrNota: nfeObject.nrNota(),
+        naturezaOperacao: nfeObject.naturezaOperacao(),
+        tipoOperacao: nfeObject.tipoOperacao(),
+        operacao: nfeObject.operacao(),
+        nome: nfeObject.nome(),
+        fantasia: nfeObject.fantasia(),
+        emitente: nfeObject.emitente(),
+        uf: nfeObject.uf(),
+        cep: nfeObject.cep(),
+        logradouro: nfeObject.logradouro(),
+        numero: nfeObject.numero(),
+        bairro: nfeObject.bairro(),
+        complemento: nfeObject.complemento(),
+        municipio: nfeObject.municipio(),
+        codigoMunicipio: nfeObject.codigoMunicipio(),
+        pais: nfeObject.pais(),
+        codigoPais: nfeObject.codigoPais(),
+        telefone: nfeObject.telefone(),
+        cnpj: nfeObject.cnpj(),
+        email: nfeObject.email(),
+        cpf: nfeObject.cpf(),
+        inscricaoNacional: nfeObject.inscricaoNacional(),
+        inscricaoMunicipal:nfeObject.inscricaoMunicipal(),
+        inscricaoEstadual: nfeObject.inscricaoEstadual(),
+        inscricaoEstadualST:nfeObject.inscricaoEstadualST(),
+        codigoRegimeTributario:nfeObject.codigoRegimeTributario(),
+        informacoesProtocolo: nfeObject.informacoesProtocolo(),
+        informacoesNFe: nfeObject.informacoesNFe(),
+        identificacaoNFe: nfeObject.identificacaoNFe(),
+        informacoesComplementares: nfeObject.informacoesComplementares(),
+        informacoesFisco: nfeObject.informacoesFisco(),
+        nrObservacoes: nfeObject.nrObservacoes(),
+        observacao: nfeObject.observacao(),
+        texto: nfeObject.texto(),
+        campoObservacao: nfeObject.campoObservacao(),
+        serie: nfeObject.serie(),
+        modelo: nfeObject.modelo(),
+        nrItens: nfeObject.nrItens()
+      };
+
+      resolve(principal);
+    });
   }
 
   getItensFrom(nfeObject){
@@ -130,6 +191,86 @@ class NfeService{
       }
 
       resolve(itens);
+
+    });
+  }
+
+  getEmitentefrom(nfeObject){
+    return new Promise((resolve, reject) =>{
+
+      if(!nfeObject){
+        reject({message: 'The xml body is required'});
+      }
+
+      const emitente = {
+        nome: nfeObject.emitente().nome(),
+        fantasia: nfeObject.emitente().fantasia(),
+        email: nfeObject.emitente().email(),
+        cpf: nfeObject.emitente().cpf(),
+        cnpj: nfeObject.emitente().cnpj(),
+        inscricaoNacional: nfeObject.emitente().inscricaoNacional(),
+        inscricaoMunicipal: nfeObject.emitente().inscricaoMunicipal(),
+        inscricaoEstadual: nfeObject.emitente().inscricaoEstadual(),
+        inscricaoEstadualST: nfeObject.emitente().inscricaoEstadualST(),
+        codigoRegimeTributario: nfeObject.emitente().codigoRegimeTributario(),
+      }
+
+      resolve(emitente);
+    });
+  }
+
+  getDestinatarioFrom(nfeObject){
+    if(!nfeObject){
+      reject({message: 'The xml body is required'});
+    }
+
+    return new Promise((resolve, reject) =>{
+      const destinatario = {
+        nome: nfeObject.destinatario().nome(),
+        fantasia: nfeObject.destinatario().fantasia(),
+        email: nfeObject.destinatario().email(),
+        cpf: nfeObject.destinatario().cpf(),
+        cnpj: nfeObject.destinatario().cnpj(),
+        inscricaoNacional: nfeObject.destinatario().inscricaoNacional(),
+        inscricaoMunicipal: nfeObject.destinatario().inscricaoMunicipal(),
+        inscricaoEstadual: nfeObject.destinatario().inscricaoEstadual(),
+        inscricaoEstadualST: nfeObject.destinatario().inscricaoEstadualST()
+      }
+      resolve(destinatario);
+    });
+  }
+
+  getTotaisFrom(nfeObject){
+    return new Promise((resolve, reject) =>{
+
+      if(!nfeObject){
+        reject({message: 'The xml body is required'});
+      }
+
+      const totalObject = nfeObject.total();
+
+      const totais = {
+        baseCalculoIcms: totalObject.baseCalculoIcms(),
+        valorIcms: totalObject.valorIcms(),
+        valorIcmsDesonerado: totalObject.valorIcmsDesonerado(),
+        baseCalculoIcmsST: totalObject.baseCalculoIcmsST(),
+        baseCalculoIcmsSTRetido: totalObject.baseCalculoIcmsSTRetido(),
+        valorIcmsST: totalObject.valorIcmsST(),
+        valorIcmsSTRetido: totalObject.valorIcmsSTRetido(),
+        valorProdutos: totalObject.valorProdutos(),
+        valorFrete: totalObject.valorFrete(),
+        valorSeguro: totalObject.valorSeguro(),
+        valorDesconto: totalObject.valorDesconto(),
+        valorII: totalObject.valorII(),
+        valorIPI: totalObject.valorIPI(),
+        valorPIS: totalObject.valorPIS(),
+        valorCOFINS: totalObject.valorCOFINS(),
+        valorOutrasDespesas: totalObject.valorOutrasDespesas(),
+        valorNota: totalObject.valorNota(),
+        valorTotalTributos: totalObject.valorTotalTributos()
+      };
+
+      resolve(totais);
 
     });
   }
