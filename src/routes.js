@@ -13,5 +13,9 @@ routes.get('/', (req, res)=>{
 routes.get('/xmlToJSON', NfeController.index);
 routes.post('/xmlToJSON', upload.single('xml'), fileExists, NfeController.parseToJSON);
 routes.post('/xmlToJSON/emitente', upload.single('xml'), fileExists, NfeController.emitenteToJSON);
+routes.post('/xmlToJSON/destinatario', upload.single('xml'), fileExists, NfeController.destinatariToJSON);
+routes.post('/xmlToJSON/itens', upload.single('xml'), fileExists, NfeController.itensToJSON);
+routes.post('/xmlToJSON/totais', upload.single('xml'), fileExists, NfeController.totaisToJSON);
+routes.post('/xmlToJSON/principal', upload.single('xml'), fileExists, NfeController.principalToJSON);
 
 export default routes;

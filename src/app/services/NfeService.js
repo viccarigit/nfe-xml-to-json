@@ -33,7 +33,7 @@ class NfeService{
     }
 
     return obj;
-  }
+  }''
 
   getPrincipalFrom(nfeObject){
     return new Promise((resolve, reject) =>{
