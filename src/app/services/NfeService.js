@@ -1,8 +1,8 @@
 import nfeParser from 'djf-nfe/src';
 
-class NfeService{
-  constructor(payload){
-    if(!payload){
+class NfeService {
+  constructor(payload) {
+    if (!payload) {
       throw Error('The xml body is required');
     }
 
@@ -10,35 +10,38 @@ class NfeService{
     this.nfeObject = this.getObjectFrom(payload);
   }
 
-  getObjectFrom(payload){
+  getObjectFrom(payload) {
     const xmlString = this.payload.buffer.toString('utf8');
     const nfeObject = nfeParser(xmlString);
 
     return nfeObject;
   }
 
-  async parse(){
+  async parse() {
 
     const nfeObject = this.nfeObject;
     var obj = {};
 
-    try{
+    try {
+
       obj.principal = await this.getPrincipalFrom(nfeObject);
       obj.emitente = await this.getEmitentefrom(nfeObject);
       obj.destinatario = await this.getDestinatarioFrom(nfeObject);
       obj.itens = await this.getItensFrom(nfeObject);
       obj.totais = await this.getTotaisFrom(nfeObject);
-    }catch(error){
+      obj.totaisDosItens = await this.getTotaisDosItensFrom(obj.itens);
+
+    } catch (error) {
       throw Error(error.message);
     }
 
     return obj;
-  }''
+  }
 
-  getPrincipalFrom(nfeObject){
-    return new Promise((resolve, reject) =>{
-      if(!nfeObject){
-        reject({message: 'The xml body is required'});
+  getPrincipalFrom(nfeObject) {
+    return new Promise((resolve, reject) => {
+      if (!nfeObject) {
+        reject({ message: 'The xml body is required' });
       }
 
       const principal = {
@@ -70,10 +73,10 @@ class NfeService{
         email: nfeObject.email(),
         cpf: nfeObject.cpf(),
         inscricaoNacional: nfeObject.inscricaoNacional(),
-        inscricaoMunicipal:nfeObject.inscricaoMunicipal(),
+        inscricaoMunicipal: nfeObject.inscricaoMunicipal(),
         inscricaoEstadual: nfeObject.inscricaoEstadual(),
-        inscricaoEstadualST:nfeObject.inscricaoEstadualST(),
-        codigoRegimeTributario:nfeObject.codigoRegimeTributario(),
+        inscricaoEstadualST: nfeObject.inscricaoEstadualST(),
+        codigoRegimeTributario: nfeObject.codigoRegimeTributario(),
         informacoesProtocolo: nfeObject.informacoesProtocolo(),
         informacoesNFe: nfeObject.informacoesNFe(),
         identificacaoNFe: nfeObject.identificacaoNFe(),
@@ -92,16 +95,16 @@ class NfeService{
     });
   }
 
-  getItensFrom(nfeObject){
-    return new Promise((resolve, reject) =>{
+  getItensFrom(nfeObject) {
+    return new Promise((resolve, reject) => {
 
-      if(!nfeObject){
-        reject({message: 'The xml body is required'});
+      if (!nfeObject) {
+        reject({ message: 'The xml body is required' });
       }
 
       var itens = [];
 
-      for(var i = 1; i <= nfeObject.nrItens(); i++){ // trata os itens da nfe
+      for (var i = 1; i <= nfeObject.nrItens(); i++) { // trata os itens da nfe
 
         let item = nfeObject.item(i);
 
@@ -109,7 +112,7 @@ class NfeService{
 
         let icmsObject = item.imposto().icms(); // trata informacoes do icms do item
 
-        if(icmsObject){
+        if (icmsObject) {
           let icms = {
             cst: icmsObject.cst(),
             baseCalculo: icmsObject.baseCalculo(),
@@ -134,12 +137,12 @@ class NfeService{
           };
 
           impostos.push({ icms });
-         }
+        }
 
 
         let ipiObject = item.imposto().ipi();
 
-        if(ipiObject){
+        if (ipiObject) {
           let ipi = {
             cst: ipiObject.cst(),
             baseCalculo: ipiObject.baseCalculo(),
@@ -148,11 +151,11 @@ class NfeService{
           };
 
           impostos.push({ ipi });
-         }
+        }
 
         let pisObject = item.imposto().pis();
 
-        if(pisObject){
+        if (pisObject) {
           let pis = {
             cst: pisObject.cst(),
             baseCalculo: pisObject.baseCalculo(),
@@ -164,7 +167,7 @@ class NfeService{
         }
 
         let cofinsObject = item.imposto().cofins();
-        if(cofinsObject){
+        if (cofinsObject) {
           let cofins = {
             cst: cofinsObject.cst(),
             baseCaculo: cofinsObject.baseCalculo(),
@@ -202,11 +205,11 @@ class NfeService{
     });
   }
 
-  getEmitentefrom(nfeObject){
-    return new Promise((resolve, reject) =>{
+  getEmitentefrom(nfeObject) {
+    return new Promise((resolve, reject) => {
 
-      if(!nfeObject){
-        reject({message: 'The xml body is required'});
+      if (!nfeObject) {
+        reject({ message: 'The xml body is required' });
       }
 
       const emitente = {
@@ -226,12 +229,12 @@ class NfeService{
     });
   }
 
-  getDestinatarioFrom(nfeObject){
-    if(!nfeObject){
-      reject({message: 'The xml body is required'});
+  getDestinatarioFrom(nfeObject) {
+    if (!nfeObject) {
+      reject({ message: 'The xml body is required' });
     }
 
-    return new Promise((resolve, reject) =>{
+    return new Promise((resolve, reject) => {
       const destinatario = {
         nome: nfeObject.destinatario().nome(),
         fantasia: nfeObject.destinatario().fantasia(),
@@ -247,11 +250,11 @@ class NfeService{
     });
   }
 
-  getTotaisFrom(nfeObject){
-    return new Promise((resolve, reject) =>{
+  getTotaisFrom(nfeObject) {
+    return new Promise((resolve, reject) => {
 
-      if(!nfeObject){
-        reject({message: 'The xml body is required'});
+      if (!nfeObject) {
+        reject({ message: 'The xml body is required' });
       }
 
       const totalObject = nfeObject.total();
@@ -279,6 +282,49 @@ class NfeService{
 
       resolve(totais);
 
+    });
+  }
+
+  getTotaisDosItensFrom(itens) {
+    return new Promise((resolve, reject) => {
+
+      if (!itens || itens.lenght === 0) {
+        reject({ message: 'The item list is required' });
+      }
+
+      const reducer = (totalizador, valor) => totalizador + Number(valor);
+
+      const impostos = itens.map((item) => {
+        return item.impostos;
+      });
+
+      var totalBaseIcms = 0;
+      var totalBaseIcmsST = 0;
+      var totalIcms = 0;
+      var totalIcmsST = 0;
+
+      impostos.forEach((imposto) => {
+        const icms = imposto.filter((imp) => {
+          return imp['icms'];
+        });
+
+        if (icms[0]) {
+          totalBaseIcms = + Number(icms[0].icms.baseCalculo ? icms[0].icms.baseCalculo : '');
+          totalBaseIcmsST = + Number(icms[0].icms.baseCalculoIcmsST ? icms[0].icms.baseCalculoIcmsST : '');
+          totalIcms = + Number(icms[0].icms.valorIcms ? icms[0].icms.valorIcms : '');
+          totalIcmsST = + Number(icms[0].icms.valorIcmsST ? icms[0].icms.valorIcmsST : '');
+        }
+
+      });
+
+      const totaisDosItens = {
+        totalBaseIcms,
+        totalBaseIcmsST,
+        totalIcms,
+        totalIcmsST
+      };
+
+      resolve(totaisDosItens);
     });
   }
 }
